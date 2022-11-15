@@ -10,15 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUser = exports.getUser = exports.createUser = void 0;
+var bcrypt = require("bcryptjs");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        var hashedPassword = bcrypt.hashSync(req.body.password, Number(process.env.SALT));
         const user = yield prisma.user.create({
             data: {
                 email: req.body.email,
                 name: req.body.name,
-                password: req.body.password
+                password: hashedPassword
             },
         });
         res.status(200).send({
